@@ -95,3 +95,6 @@ POST /products: Add a new product (restricted to admins).
 PUT /products/:id: Update a product (restricted to admins).
 
 
+Contributing
+Gonza And Lauta
+
