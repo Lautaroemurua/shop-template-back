@@ -69,3 +69,29 @@ MONGODB_URI=mongodb://localhost:27017/ecommerce
 JWT_SECRET=your_jwt_secret
 
 # Other environment variables...
+
+    ## Usage
+Start the development server:
+
+API Endpoints
+Here’s a quick overview of the API endpoints.
+
+Authentication
+
+POST /auth/login: Authenticate a user and receive a JWT.
+POST /auth/register: Register a new user.
+Roles
+
+GET /roles: Retrieve all roles.
+POST /roles: Create a new role.
+Menus
+
+GET /menus: Retrieve menus based on user roles.
+POST /menus: Add a new menu (restricted to admins).
+Products
+
+GET /products: Retrieve all products.
+POST /products: Add a new product (restricted to admins).
+PUT /products/:id: Update a product (restricted to admins).
+
+
