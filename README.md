@@ -1,2 +1,71 @@
-# tienda-online-back
-Backend en Node.js utilizando NestJS para una tienda en línea con distintos roles de usuario (propietario, administrador, vendedor) que permitan gestionar los menús que se mostrarán en el frontend
+# E-commerce Backend API with NestJS
+
+Welcome to the E-commerce Backend API built with [NestJS](https://nestjs.com/) and TypeScript. This API manages user roles, menus, and products in an e-commerce platform.
+
+![NestJS Logo](https://nestjs.com/img/logo_text.svg)
+
+## Table of Contents
+
+1. [Features](#features)
+2. [Tech Stack](#tech-stack)
+3. [Installation](#installation)
+4. [Environment Variables](#environment-variables)
+5. [Usage](#usage)
+6. [API Endpoints](#api-endpoints)
+7. [Running the Tests](#running-the-tests)
+8. [Contributing](#contributing)
+9. [License](#license)
+
+## Features
+
+- User authentication and role management
+- Dynamic menu visibility based on user roles
+- Product management (CRUD operations)
+- Secure API with JWT authentication
+- Role-based access control
+- MongoDB integration for data storage
+
+## Tech Stack
+
+- **Backend Framework:** [NestJS](https://nestjs.com/)
+- **Database:** MongoDB (using [Mongoose](https://mongoosejs.com/))
+- **Authentication:** JWT (JSON Web Tokens)
+- **Authorization:** Role-based access control
+- **Environment Variables Management:** Dotenv
+- **Testing Framework:** Jest
+
+## Installation
+
+1. Clone the repository:
+
+    ```bash
+    git clone https://github.com/yourusername/ecommerce-nestjs-api.git
+    ```
+
+2. Navigate to the project directory:
+
+    ```bash
+    cd ecommerce-nestjs-api
+    ```
+
+3. Install the dependencies:
+
+    ```bash
+    npm install
+    ```
+
+## Environment Variables
+
+Create a `.env` file in the root directory of your project, and add the following variables:
+
+```bash
+# Server
+PORT=3000
+
+# MongoDB
+MONGODB_URI=mongodb://localhost:27017/ecommerce
+
+# JWT Secret
+JWT_SECRET=your_jwt_secret
+
+# Other environment variables...
