@@ -1,0 +1,29 @@
+{
+  "name": "shops-template-backend",
+  "version": "1.0.0",
+  "description": "Tienda Online",
+  "main": "main.ts",
+  "scripts": {
+    "start": "npx ts-node src/infrastructure/webserver/express-app.ts"
+  },
+  "author": "Lautaro Murua",
+  "license": "ISC",
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "axios": "^1.7.7",
+    "body-parser": "^1.20.3",
+    "dotenv": "^16.4.5",
+    "elevenlabs": "^0.16.1",
+    "express": "^4.21.0",
+    "fluent-ffmpeg": "^2.1.3",
+    "openai": "^4.67.1",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.4",
+    "@types/uuid": "^10.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.2"
+  }
+}
