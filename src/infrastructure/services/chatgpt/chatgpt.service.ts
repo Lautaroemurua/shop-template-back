@@ -16,9 +16,10 @@ const client = new ElevenLabsClient({
 });
 
 export interface FunctionTool extends ChatCompletionTool {
-  execute: (arg0?: any) => Promise<string>
+  execute: (params: any) => Promise<string>;
 }
 
+// Cambia el tipo de messages para que acepte strings como claves y arreglos de mensajes como valores
 export const messages: { [key: string]: ChatCompletionMessage[] } = {};
 
 
@@ -75,28 +76,26 @@ export class ChatGpt implements AiModel {
   }
 
   protected addMessageUser(message: string) {
-    this.logger.add('ChatGpt -- Agregando mensaje del usuario al contexto');
+    this.logger.add('ChatGpt -- Agregando mensaje del usuario al contexto')
 
     const msgUser: ChatCompletionMessage = {
-        role: 'assistant',
-        content: message,
-        refusal: undefined || null // O un valor por defecto si es necesario
+      role: 'assistant',
+      content: message,
+      refusal: null, // Si no tienes rechazo, puedes asignar `null` o un valor adecuado.
     };
 
     messages[this.userId].push(msgUser);
-}
+  }
 
-protected addMessageSystem(chatMessage: ChatCompletionSystemMessageParam) {
-  this.logger.add('ChatGpt -- Agregando respuesta de sistema al contexto');
-
-  const systemMessage: ChatCompletionMessage = {
+  protected addMessageSystem(chatMessage: ChatCompletionSystemMessageParam) {
+    this.logger.add('ChatGpt -- Agregando respuesta de sistema al contexto')
+    const systemMessage: ChatCompletionMessage = {
       role: 'assistant',
-      content: chatMessage.content, // Asumiendo que chatMessage tiene una propiedad content
-      refusal: undefined || null // O un valor por defecto si es necesario
-  };
-
-  messages[this.userId].push(systemMessage);
-}
+      content: "y ella qliao",
+      refusal: null, // Añadir la propiedad `refusal`.
+    };
+    messages[this.userId].push(systemMessage);
+  }
 
   protected addMessageAsistence(chatMessage: ChatCompletionMessage) {
     this.logger.add('ChatGpt -- Agregando respuesta del asistente al contexto')
@@ -104,18 +103,15 @@ protected addMessageSystem(chatMessage: ChatCompletionSystemMessageParam) {
   }
 
   protected addMessageTools(toolCallId: string, functionName: string, functionResponse: string) {
-    this.logger.add('ChatGpt -- Agregando respuesta de funciones al contexto');
+    this.logger.add('ChatGpt -- Agregando respuesta de funciones al contexto')
 
-    const toolMessage: ChatCompletionMessage = {
-        role: "assistant",
-        name: functionName,
-        content: functionResponse,
-        tool_calls: toolCallId, // Cambia 'tool_call_id' a 'tool_calls'
-        refusal: undefined || null // O un valor por defecto si es necesario
-    };
-
-    messages[this.userId].push(toolMessage);
-}
+    messages[this.userId].push({
+      tool_call_id: toolCallId,
+      role: "assistant",
+      name: functionName,
+      content: functionResponse,
+    });
+  }
 
   private setAvailableFunctions() {
     this.logger.add('ChatGpt -- Cargando funciones existentes')

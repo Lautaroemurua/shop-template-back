@@ -1,142 +1,135 @@
-import express, { NextFunction, Request, Response } from "express";
-import bodyParser from "body-parser";
-import { MessageController } from "../../interfaces/controllers/message.controller";
-import { HandleMessageUseCase } from "../../app/usescase/handle-message.usecase";
-import { ChatGpt } from "../services/chatgpt/chatgpt.service";
-import { Whatsapp } from "../services/whatsapp/whatsapp.service";
+import express, { NextFunction, Request, RequestHandler, Response } from "express";
+const router = express.Router()
+import { Whatsapp } from '../../infrastructure/services/whatsapp/whatsapp.service';
+import { ChatGpt } from "../../infrastructure/services/chatgpt/chatgpt.service"
 import { ElevenLabs } from "../services/elevenlabs/eleven-labs.js";
-import { ChatFacade } from "../services/ChatFacade";
-import { config } from "../config/env";
+import { ChatFacade } from "../services/ChatFacade.js";
 import { Messages, WhatsappData } from "../../interfaces/WhatsaapData";
-import { logger } from "../services/logger/Logs";
-// Inicializa los servicios y casos de uso
-const chatGpt = new ChatGpt(process.env.OPENAI_API_KEY || '');
-const whatsAppService = new Whatsapp(process.env.WHATSAPP_TOKEN || '',);
-const handleMessageUseCase = new HandleMessageUseCase(chatGpt, whatsAppService);
+import { logger } from "../services/logger/Logs.js";
+import { traerPersonalidad, tools } from "../../infrastructure/services/chatgpt/tools";
 
-// Configura el controlador
-const messageController = new MessageController(handleMessageUseCase);
-
-// Inicializa Express
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 
-// Ruta para verificar el webhook
-app.get("/webhook", (req, res) => {
-    const verifyToken = config.whatsappVerifyToken || '';
-    const mode = req.query["hub.mode"];
-    const token = req.query["hub.verify_token"];
-    const challenge = req.query["hub.challenge"];
-
-    if (mode && token && mode === "subscribe" && token === verifyToken) {
-        console.log("Webhook verificado correctamente.");
-        res.status(200).send(challenge);
-    } else {
-        res.status(403).send("Error de verificación.");
-    }
-});
+const { WEBHOOK_VERIFY_TOKEN } = process.env;
 
 interface WhatsappRequest extends Request<any, any, WhatsappData | undefined> {
-    whatsappData?: {
-      wa_id: string
-      messages: Messages
-    }
+  whatsappData?: {
+    wa_id: string
+    messages: Messages
+  }
+}
+
+const validarEntradaWhatsapp: RequestHandler = (req: WhatsappRequest, res: Response, next) => {
+
+  const { body } = req;
+
+
+  if (!body || !body.entry || !body.entry[0].changes || !body.entry[0].changes[0].value) {
+    res.sendStatus(400);
+    return;
   }
 
-const validarEntradaWhatsapp = async (req: WhatsappRequest, res: Response, next: NextFunction): Promise<void> => {
+  const values = body.entry[0].changes[0].value;
 
-    const { body } = req;
-  
-  
-    if (!body || !body.entry || !body.entry[0].changes || !body.entry[0].changes[0].value) {
-      res.sendStatus(400);
-      return;
-    }
-  
-    const values = body.entry[0].changes[0].value;
-  
-    if (!values.contacts) {
-      // console.log("!values.contacts");
-      res.sendStatus(400);
-      return;
-    }
-  
-    if (!values.messages) {
-      // console.log("!values.messages[0]");
-      res.sendStatus(400);
-      return;
-    }
-  
-    if (!values.contacts[0].wa_id) {
-      // console.log("!userId");
-      res.sendStatus(400);
-      return;
-    }
-  
-  
-    // 5491134192104
-    // 54111534192104
-    // 5411154192104  
-    req.whatsappData = {
-      wa_id: values.contacts[0].wa_id.replace("54911", "541115"),
-      messages: values.messages[0]
-    }
-  
-    next();
-  };
+  if (!values.contacts) {
+    // console.log("!values.contacts");
+    res.sendStatus(400);
+    return;
+  }
 
-  app.post("/webhook", validarEntradaWhatsapp, async (req: WhatsappRequest, res: Response): Promise<void> => {
-    try {
-        const whatsappData = req.whatsappData;
+  if (!values.messages) {
+    // console.log("!values.messages[0]");
+    res.sendStatus(400);
+    return;
+  }
 
-        if (!whatsappData) {
-            res.status(400).send('Datos no validados');
-            return;
+  if (!values.contacts[0].wa_id) {
+    // console.log("!userId");
+    res.sendStatus(400);
+    return;
+  }
+
+  // await directus.request(createItem('webhook', { data: body }))
+
+  // 5491134192104
+  // 54111534192104
+  // 5411154192104  
+  req.whatsappData = {
+    wa_id: values.contacts[0].wa_id.replace("54911", "541115"),
+    messages: values.messages[0]
+  }
+
+  next();
+};
+
+
+router.post("/webhook", validarEntradaWhatsapp, async (req: WhatsappRequest, res) => {
+  try {
+    const whatsappData = req.whatsappData;
+
+    if (!whatsappData) {
+      return res.status(400).send('Datos no validados');
+    }
+
+    const personalidad = await traerPersonalidad()
+    const userId = whatsappData.wa_id
+    const whatsapp = new Whatsapp(userId, logger)
+    const chatGpt = new ChatGpt(userId, personalidad, tools, logger)
+    const elevenLabs = new ElevenLabs()
+
+    const chat = new ChatFacade(whatsapp, chatGpt, elevenLabs)
+
+
+    switch (whatsappData.messages.type) {
+      case "text":
+        logger.add("Recibiendo mensaje tipo texto");
+        const messagesWZ = whatsappData.messages.text?.body;
+        if (!messagesWZ) {
+          res.sendStatus(200);
+          return;
+        }
+        await chat.procesarMensajeTexto(whatsappData.messages.id, messagesWZ)
+        break;
+      case "audio":
+        logger.add("Recibiendo mensaje tipo AUDIO");
+        const audioWz = whatsappData.messages.audio;
+
+        if (!audioWz) {
+          console.log("!userId || !audioWz");
+          res.sendStatus(200);
+          return;
         }
 
-        const personalidad = await traerPersonalidad()
-        const userId = whatsappData.wa_id
-        const whatsapp = new Whatsapp(userId, logger)
-        const chatGpt = new ChatGpt(userId, personalidad, tools, logger)
-        const elevenLabs = new ElevenLabs()
-
-        const chat = new ChatFacade(whatsapp, chatGpt, elevenLabs);
-
-        switch (whatsappData.messages.type) {
-            case "text":
-                console.log("Recibiendo mensaje tipo texto");
-                const messagesWZ = whatsappData.messages.text?.body;
-                if (!messagesWZ) {
-                    res.sendStatus(200);
-                    return;
-                }
-                await chat.procesarMensajeTexto(whatsappData.messages.id, messagesWZ);
-                break;
-            case "audio":
-                console.log("Recibiendo mensaje tipo AUDIO");
-                const audioWz = whatsappData.messages.audio;
-
-                if (!audioWz) {
-                    console.log("No se encontró el audio.");
-                    res.sendStatus(200);
-                    return;
-                }
-
-                await chat.procesarMensajeAudio(whatsappData.messages.id, audioWz.id);
-                break;
-        }
-
-        res.send(chatGpt.getHistory());
-    } catch (e: any) {
-        res.send(e.response || 'Ocurrió un error');
+        await chat.procesarMensajeAudio(whatsappData.messages.id, audioWz.id)
+        break;
     }
+
+    res.send(chatGpt.getHistory());
+  } catch (e: any) {
+    res.send(e.response);
+  }
+});
+
+router.get("/webhook", (req, res) => {
+  const mode = req.query["hub.mode"];
+  const token = req.query["hub.verify_token"];
+  const challenge = req.query["hub.challenge"];
+
+  // check the mode and token sent are correct
+  if (mode === "subscribe" && token === WEBHOOK_VERIFY_TOKEN) {
+    // respond with 200 OK and challenge token from the request
+    res.status(200).send(challenge);
+  } else {
+    // respond with '403 Forbidden' if verify tokens do not match
+    res.sendStatus(403);
+  }
 });
 
 
-// Escucha en el puerto
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
 
-export default app;
+router.post("/test", async (req, res) => {
+  res.status(200).send('asdas');
+})
+
+export default router
