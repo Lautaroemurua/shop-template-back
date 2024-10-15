@@ -1,19 +1,46 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { Conversation } from 'src/domain/entities/conversation.entity';
-import { Mesages } from 'src/domain/entities/messages.entity';
-import { Users } from 'src/domain/entities/users.entity';
+import { DataSourceOptions, DataSource } from 'typeorm';
+import { join } from 'path';
+import { config } from 'dotenv';
 
-export const typeOrmConfig: TypeOrmModuleOptions = {
-  type: 'mssql',
-  host: 'localhost',        // Cambia esto si usas otro host
-  port: 1433,               // Puerto predeterminado de MSSQL
-  username: 'tu_usuario',   // Cambia esto a tu usuario
-  password: 'tu_contraseña', // Cambia esto a tu contraseña
-  database: 'tu_base_de_datos', // Cambia esto al nombre de tu base de datos
-  entities: [Conversation, Mesages, Users],
-  synchronize: true,        // Solo en desarrollo; elimina en producción
-  options: {
-    encrypt: false, // Puedes cambiar esto si es necesario
-    enableArithAbort: true,
-  },
+config();
+
+// Configuración para TypeORM dentro de los módulos de NestJS
+export const typeOrmModuleConfig: TypeOrmModuleOptions = {
+  type: 'postgres',  // Tipo de base de datos
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT, 10) || 5432,
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME || 'mydatabase',
+  entities: [join(__dirname, '../../domain/entities/*.entity{.ts,.js}')],
+  synchronize: true,  // Solo para desarrollo
+  retryAttempts: 3,
+  retryDelay: 3000,
+  autoLoadEntities: true,
+  keepConnectionAlive: true,
 };
+
+// Configuración de `DataSource` para inicializar la conexión a la base de datos
+export const typeOrmDataSourceConfig: DataSourceOptions = {
+  type: 'postgres',  // Tipo de base de datos
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT, 10) || 5432,
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME || 'mydatabase',
+  entities: [join(__dirname, '../../domain/entities/*.entity{.ts,.js}')],
+  synchronize: true,  // Solo para desarrollo
+};
+
+// Crear instancia de `DataSource` para ejecutar consultas directas
+export const AppDataSource = new DataSource(typeOrmDataSourceConfig);
+
+
+//por que esta configuracion?
+
+// Diferencias entre las configuraciones:
+// typeOrmModuleConfig: Es utilizado por el módulo de TypeORM en NestJS y contiene propiedades como retryAttempts, autoLoadEntities,
+//  etc., que son propias de la integración de TypeORM con NestJS.
+// typeOrmDataSourceConfig: Esta configuración es utilizada por TypeORM en su versión pura (sin NestJS) para crear una instancia de DataSource,
+//  que no admite algunas propiedades que son específicas de NestJS.

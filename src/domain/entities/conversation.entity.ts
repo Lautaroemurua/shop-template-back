@@ -1,14 +1,13 @@
-import { UUID } from 'crypto';
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity()
-export class Conversation {
-  @PrimaryGeneratedColumn()
-  user_id: UUID;
+@Entity('conversations')
+export class ConversationEntity {
+  @PrimaryGeneratedColumn('uuid')
+  user_id: string;
 
   @Column()
   summary: string;
 
-  @Column({ type: 'datetime', default: () => 'GETDATE()' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 }

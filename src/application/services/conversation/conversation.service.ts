@@ -11,8 +11,8 @@ export class ConversationService {
 
   async startConversation(userId: string, summary: string) {
     const userId2 = '11e39612-f450-4e67-a8b2-99d7471ecf64'
-    const conversation = this.conversationRepository.create({ user_id: userId2, summary });
-    return await this.conversationRepository.save(conversation);
+    const conversation = this.conversationRepository.createConversation(userId2, summary);
+    return conversation;
   }
 
   async saveUserMessage(conversationId: string, message: string, tokens: number) {

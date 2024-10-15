@@ -1,10 +1,12 @@
-import { UUID } from 'crypto';
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
-export class Mesages {
-  @PrimaryGeneratedColumn()
-  conversation_id: UUID;
+@Entity('messages') // Asegúrate de que el nombre de la tabla sea correcto
+export class Messages {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column()
+  conversation_id: string;
 
   @Column()
   message: string;
@@ -15,6 +17,5 @@ export class Mesages {
   @Column()
   tokens: number;
 
-  @Column({ type: 'datetime', default: () => 'GETDATE()' })
-  createdAt: Date;
+  // Puedes añadir más columnas según sea necesario
 }
