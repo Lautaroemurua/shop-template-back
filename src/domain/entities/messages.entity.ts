@@ -17,5 +17,4 @@ export class Messages {
   @Column()
   tokens: number;
 
-  // Puedes añadir más columnas según sea necesario
 }

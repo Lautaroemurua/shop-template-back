@@ -11,13 +11,15 @@ import { ConversationEntity } from './domain/entities/conversation.entity';
 import { ConversationService } from './application/services/conversation/conversation.service';
 import { Messages } from './domain/entities/messages.entity';
 import { MessagesRepository } from './application/repositories/messages.repository';
+import { WhatsAppController } from './presentation/whatsapp/whatsapp.controller';
+import { SpeechToTextService } from './application/services/speech-to-text/speech-to-text.service';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmModuleConfig),
     TypeOrmModule.forFeature([ConversationEntity, Messages]) // Asegúrate de importar aquí también
   ],
-  controllers: [MessageController],
+  controllers: [MessageController, WhatsAppController],
   providers: [
     LlamaService, 
     WhatsAppService, 
@@ -25,7 +27,8 @@ import { MessagesRepository } from './application/repositories/messages.reposito
     OpenAiService, 
     ConversationRepository, 
     MessagesRepository,
-    ConversationService
+    ConversationService,
+    SpeechToTextService
   ],
   exports: [ConversationService]
 })
