@@ -1,13 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+// src/application/domain/entities/users.entity.ts
 
-@Entity('users') // Puedes especificar el nombre de la tabla si es necesario
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { ConversationsEntity } from './conversations.entity';
+
+@Entity('users')
 export class Users {
-  @PrimaryGeneratedColumn('uuid')  // Genera UUID automáticamente
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  number: string;
+  @Column({ unique: true })
+  phone: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })  // Usa CURRENT_TIMESTAMP para PostgreSQL
-  createdAt: Date;
+  @OneToMany(() => ConversationsEntity, conversation => conversation.user)
+  conversations: ConversationsEntity[];
 }

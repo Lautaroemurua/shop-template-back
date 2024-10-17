@@ -2,7 +2,7 @@ import { Controller, Post, Body } from '@nestjs/common';
 import { ConversationService } from '../../application/services/conversation/conversation.service';
 
 @Controller('messages')
-export class MessageController {
+export class MessagesController {
   constructor(private readonly conversationService: ConversationService) {}
 
   @Post('start')

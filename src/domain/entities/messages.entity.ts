@@ -1,20 +1,25 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+// src/application/domain/entities/messages.entity.ts
 
-@Entity('messages') // Asegúrate de que el nombre de la tabla sea correcto
-export class Messages {
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { ConversationsEntity } from './conversations.entity';
+
+@Entity('messages')
+export class MessagesEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  conversation_id: string;
+  @ManyToOne(() => ConversationsEntity, conversation => conversation.messages)
+  conversation: ConversationsEntity;
 
   @Column()
   message: string;
 
   @Column()
-  role: string;
+  role: string;  // Puede ser 'user' o 'bot'
 
   @Column()
   tokens: number;
 
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
 }

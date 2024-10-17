@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { LlamaService } from '../../infrastructure/llama/llama.service';
 import { WhatsAppService } from '../../infrastructure/whatsapp/whatsapp.service';
-import { ConversationRepository } from 'src/infrastructure/database/conversation.repository'; // Asegúrate de la importación correcta
+import { ConversationRepository } from 'src/infrastructure/repositories/conversation.repository'; // Asegúrate de la importación correcta
 import { UUID } from 'crypto';
 
 @Injectable()
