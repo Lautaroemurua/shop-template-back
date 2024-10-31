@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, Repository } from 'typeorm';
-import { ConfigurationEntity } from '../../../domain/entities/configuration.entity'
+import { ConfigurationEntity } from '../../../domain/entities/configuration.entity';
 
 @Injectable()
 export class ConfigurationService {
@@ -12,8 +12,7 @@ export class ConfigurationService {
   ) {}
 
   async getPersonality(): Promise<string> {
-    const options: FindOneOptions<ConfigurationEntity> = {};
-    const config = await this.configRepository.findOne(options); // Pasa el objeto de opciones
-    return config?.personality ?? 'default';
+    const config = await this.configRepository.find({ take: 1 }); // Obtiene el primer registro
+    return config[0]?.personality ?? 'default';
   }
 }

@@ -41,7 +41,6 @@ export class WhatsAppController {
       }
 
       const personality = await this.configurationService.getPersonality();
-      const userId = whatsappData.wa_id;
 
       switch (whatsappData.messages.type) {
         case 'text':
