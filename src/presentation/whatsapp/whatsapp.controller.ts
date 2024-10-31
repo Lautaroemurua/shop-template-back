@@ -42,7 +42,7 @@ export class WhatsAppController {
       }
   
       const personality = await this.configurationService.getPersonality();
-      const phone = whatsappData.from; // Asumiendo que el número de teléfono está en whatsappData.from
+      const phone = whatsappData.entry[0].changes[0].value.contacts[0].wa_id // Asumiendo que el número de teléfono está en whatsappData.from
   
       // Iniciar la conversación, creando el usuario si no existe
       const conversation = await this.conversationService.startConversation(phone);
@@ -78,7 +78,8 @@ export class WhatsAppController {
   
       res.send(this.chatFacade.getHistory());
     } catch (e) {
-      res.send(e.message);
+      console.error('Error starting conversation:', e);
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error starting conversation');
     }
   }
   
