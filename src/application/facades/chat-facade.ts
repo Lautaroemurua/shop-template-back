@@ -1,12 +1,9 @@
-// src/domain/facades/chat.facade.ts
 import { Injectable } from '@nestjs/common';
-import { WhatsappService } from '../services/whatsapp/whatsapp.service'
+import { WhatsAppService } from '../services/whatsapp/whatsapp.service'; // Ajusta la ruta según sea necesario
 
 @Injectable()
 export class ChatFacade {
-  constructor(
-    private readonly whatsappService: WhatsappService,
-  ) {}
+    constructor(private readonly whatsappService: WhatsAppService) {}
 
   async procesarMensajeTexto(messageId: string, messageText: string, personality: string) {
     // Procesa el mensaje de texto con la personalidad

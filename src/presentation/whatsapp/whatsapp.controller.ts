@@ -1,17 +1,17 @@
-import { Controller, Query, HttpException, HttpStatus, Get, Post, Body, Res } from '@nestjs/common';
-import { ChatFacade } from 'src/application/facades/chat-facade';
-import { ConfigurationService } from 'src/application/services/configutarion/configutarion.service';
-import { WhatsAppService } from 'src/infrastructure/whatsapp/whatsapp.service';
+// src/presentation/whatsapp/whatsapp.controller.ts
+import { Body, Controller, Get, HttpStatus, Post, Res } from '@nestjs/common';
+import { ConfigurationService } from '../../application/services/configutation/configutation.service';
+import { WhatsAppService } from '../../application/services/whatsapp/whatsapp.service';
+import { ChatFacade } from '../../application/facades/chat-facade';
 import { Response } from 'express';
-
 
 @Controller('whatsapp')
 export class WhatsAppController {
-  constructor(
-    private readonly configService: ConfigurationService,
-    private readonly whatsappService: WhatsAppService,
-    private readonly chatFacade: ChatFacade,
-  ) {}
+    constructor(
+        private readonly configurationService: ConfigurationService,
+        private readonly whatsappService: WhatsAppService,
+        private readonly chatFacade: ChatFacade, // Asegúrate de que ChatFacade esté aquí
+    ) {}
 
   @Get('webhook')
   async validateWebhook(
@@ -40,7 +40,7 @@ export class WhatsAppController {
         return res.status(HttpStatus.BAD_REQUEST).send('Datos no validados');
       }
 
-      const personality = await this.configService.getPersonality();
+      const personality = await this.configurationService.getPersonality();
       const userId = whatsappData.wa_id;
 
       switch (whatsappData.messages.type) {

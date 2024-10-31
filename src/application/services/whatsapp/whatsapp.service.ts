@@ -1,33 +1,21 @@
+// src/application/services/whatsapp/whatsapp.service.ts
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ConversationEntity } from '../../../domain/entities/conversation.entity';
-import { MessagesEntity } from '../../../domain/entities/messages.entity';
+import { MessagesRepository } from '../../repositories/messages.repository';
+import { ConversationRepository } from '../../repositories/conversation.repository';
 
 @Injectable()
-export class WhatsappService {
+export class WhatsAppService {
   constructor(
-    @InjectRepository(ConversationEntity)
-    private readonly conversationRepository: Repository<ConversationEntity>,
-    @InjectRepository(MessagesEntity)
-    private readonly messageRepository: Repository<MessagesEntity>,
+    private readonly messagesRepository: MessagesRepository,
+    private readonly conversationRepository: ConversationRepository,
   ) {}
 
   async saveMessage(conversationId: string, message: string, role: string, tokens: number) {
-    const newMessage = this.messageRepository.create({
-      conversation_id: conversationId,
-      message,
-      role,
-      tokens,
-    });
-    return this.messageRepository.save(newMessage);
+    return this.messagesRepository.saveMessage(conversationId, message, role, tokens);
   }
 
   async saveConversation(userId: string, summary: string) {
-    const newConversation = this.conversationRepository.create({
-      user_id: userId,
-      summary,
-    });
-    return this.conversationRepository.save(newConversation);
+    // Llama a createConversation pasando los parámetros individuales
+    return this.conversationRepository.createConversation(userId, summary);
   }
 }
