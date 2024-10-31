@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AiFacade } from './ai-facade.interface';
+import { AiFacade } from './ai.facade.interface';
 import { LlamaService } from '../../infrastructure/llama/llama.service';
 // import { OpenAiService } from '../../openai/openai.service'; // Crearás este servicio luego
 

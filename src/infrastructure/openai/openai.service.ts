@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AiFacade } from '../../application/facades/ai-facade.interface';
+import { AiFacade } from '../../application/facades/ai.facade.interface';
 
 @Injectable()
 export class OpenAiService implements AiFacade {

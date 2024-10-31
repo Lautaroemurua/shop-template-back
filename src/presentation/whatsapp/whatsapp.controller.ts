@@ -2,7 +2,7 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Post, Query, Res } from '@nestjs/common';
 import { ConfigurationService } from '../../application/services/configutation/configutation.service';
 import { WhatsAppService } from '../../application/services/whatsapp/whatsapp.service';
-import { ChatFacade } from '../../application/facades/chat-facade';
+import { ChatFacade } from '../../application/facades/chat.facade';
 import { Response } from 'express';
 
 @Controller('whatsapp')

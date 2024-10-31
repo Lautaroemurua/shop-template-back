@@ -7,7 +7,7 @@ import { ConfigurationService } from '../application/services/configutation/conf
 import { WhatsAppService } from './services/whatsapp/whatsapp.service';
 import { ProcessMessageUseCase } from './use-cases/process-message.use-case';
 import { InfrastructureModule } from 'src/infrastructure/infrastructure.module';
-import { ChatFacade } from './facades/chat-facade';
+import { ChatFacade } from './facades/chat.facade';
 
 @Module({
     imports: [TypeOrmModule.forFeature([ConversationRepository, MessagesRepository]), InfrastructureModule],
