@@ -15,21 +15,22 @@ export class ConversationService {
       try {
           // Buscar el usuario por su número de teléfono
           let user = await this.userRepository.findByPhone(phone);
-  
           // Si el usuario no existe, crearlo
           if (!user) {
-              user = await this.userRepository.createUser(phone);
+            user = await this.userRepository.createUser(phone);
+            console.log('User created:', user);
           }
+          console.log('Usuer founded:', user);
   
           // Buscar una conversación abierta para el usuario (resumen null)
           let conversation = await this.conversationRepository.findOpenConversation(user.id);
   
           // Si no existe una conversación abierta, crearla
           if (!conversation) {
-              conversation = await this.conversationRepository.createConversation(user.id, null); // Cambia '' a null para un resumen vacío
+            conversation = await this.conversationRepository.createConversation(user.id, null);
+            console.log('Conversation created:', conversation);
           }
-  
-          // Retornar la conversación (ya sea existente o recién creada)
+          console.log('Conversation founded:', conversation);
           return conversation;
       } catch (error) {
           console.error('Error starting conversation:', error);

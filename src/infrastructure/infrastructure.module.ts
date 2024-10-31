@@ -1,10 +1,9 @@
-// src/infrastructure/infrastructure.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DomainModule } from '../domain/domain.module'; // Asegúrate de importar DomainModule
-import { LlamaService } from './llama/llama.service';
-import { WhatsAppService } from './whatsapp/whatsapp.service';
-import { OpenAiService } from './openai/openai.service';
+import { DomainModule } from '../domain/domain.module';
+import { LlamaService } from './ia/llama/llama.service';
+import { WhatsAppClient } from './chat/whatsapp/whatsapp.client';
+import { OpenAiClient } from './ia/openai/openai.client';
 import { typeOrmModuleConfig } from './database/database.config';
 import { SpeechToTextService } from '../application/services/speech-to-text/speech-to-text.service';
 
@@ -15,16 +14,16 @@ import { SpeechToTextService } from '../application/services/speech-to-text/spee
   ],
   providers: [
     LlamaService,
-    WhatsAppService,
-    OpenAiService,
+    WhatsAppClient,
+    OpenAiClient,
     SpeechToTextService,
   ],
   exports: [
     TypeOrmModule,
     LlamaService,
-    WhatsAppService,
-    OpenAiService,
-    DomainModule, // Asegúrate de exportar DomainModule
+    WhatsAppClient,
+    OpenAiClient,
+    DomainModule,
   ]
 })
 export class InfrastructureModule {}

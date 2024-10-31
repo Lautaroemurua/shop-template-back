@@ -12,24 +12,24 @@ export class ConversationRepository {
   ) {}
 
   // Método para crear una nueva conversación
-  async createConversation(userId: string, summary: string | null): Promise<ConversationEntity> {
-    const conversation = this.repository.create({ user_id: userId, summary });
+  async createConversation(user_id: string, summary: string | null): Promise<ConversationEntity> {
+    const conversation = this.repository.create({ user_id: user_id, summary });
     return this.repository.save(conversation);
   }
 
   // Método para encontrar una conversación abierta (donde summary es null)
-  async findOpenConversation(userId: string): Promise<ConversationEntity | null> {
+  async findOpenConversation(user_id: string): Promise<ConversationEntity | null> {
     return this.repository.findOne({
       where: {
-        user_id: userId,
+        user_id: user_id,
         summary: null,
       },
     });
   }
 
   // Método para actualizar el resumen de una conversación existente
-  async updateSummary(userId: string, summary: string): Promise<ConversationEntity | null> {
-    const conversation = await this.findOpenConversation(userId); // Usamos `findOpenConversation`
+  async updateSummary(user_id: string, summary: string): Promise<ConversationEntity | null> {
+    const conversation = await this.findOpenConversation(user_id); // Usamos `findOpenConversation`
     if (!conversation) return null;
 
     conversation.summary = summary;

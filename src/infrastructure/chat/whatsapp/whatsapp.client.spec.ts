@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { OpenaiService } from './openai.service';
+import { WhatsAppClient } from './whatsapp.client';
 
-describe('OpenaiService', () => {
-  let service: OpenaiService;
+describe('WhatsAppClient', () => {
+  let service: WhatsAppClient;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [OpenaiService],
+      providers: [WhatsAppClient],
     }).compile();
 
-    service = module.get<OpenaiService>(OpenaiService);
+    service = module.get<WhatsAppClient>(WhatsAppClient);
   });
 
   it('should be defined', () => {
