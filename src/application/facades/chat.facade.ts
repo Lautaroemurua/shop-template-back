@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { WhatsAppService } from '../services/whatsapp/whatsapp.service'; // Ajusta la ruta según sea necesario
+import { WhatsAppService } from '../services/whatsapp/whatsapp.service';
 
 @Injectable()
 export class ChatFacade {

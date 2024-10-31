@@ -2,8 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConversationRepository } from 'src/application/repositories/conversation.repository';
 import { MessagesRepository } from '../../repositories/messages.repository';
-import { UserRepository } from '../../repositories/user.repository'; // Asegúrate de que esta ruta sea correcta
-import { UserEntity } from '../../../domain/entities/user.entity'; // Ajusta la ruta si es necesario
+import { UserRepository } from '../../repositories/user.repository'; 
 
 @Injectable()
 export class ConversationService {

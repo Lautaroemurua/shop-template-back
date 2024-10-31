@@ -1,7 +1,8 @@
-import { EntityRepository, Repository } from 'typeorm';
-import { UserEntity } from '../../domain/entities/user.entity'; // Ajusta la ruta si es necesario
+import { Repository } from 'typeorm';
+import { UserEntity } from '../../domain/entities/user.entity';
+import { Injectable } from '@nestjs/common';
 
-@EntityRepository(UserEntity)
+@Injectable()
 export class UserRepository extends Repository<UserEntity> {
     async findByPhone(phone: string): Promise<UserEntity | undefined> {
         return this.findOne({ where: { phone } });
