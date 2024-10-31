@@ -8,5 +8,6 @@ export interface ConversationInterface {
     summary: string;
     suggestion: string;
     interests: string;
+    tokens: number;
     channel: ChannelsEnum | null;
   }

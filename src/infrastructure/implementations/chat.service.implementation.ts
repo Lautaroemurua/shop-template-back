@@ -1,5 +1,4 @@
-
-export interface ServiceChat {
+export interface ChatServiceImplementation {
     getId: () => string
     markMessageAsRead: (id: string) => Promise<void>
     sendMessage: (messages: { audio?: string, text?: string, link?: string, caption?: string }[]) => Promise<void>

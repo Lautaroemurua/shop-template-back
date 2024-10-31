@@ -1,41 +1,89 @@
 import { Injectable } from '@nestjs/common';
-import { WhatsAppService } from '../services/whatsapp/whatsapp.service';
-import { IaSchema } from 'src/infrastructure/implementations/ia-schema.interface';
-import { IaAudioModel } from 'src/infrastructure/implementations/ia-audio-schema';
-import { DatabaseSchema } from 'src/infrastructure/implementations/database.schema';
+import { DatabaseServiceImplementation } from 'src/infrastructure/implementations/database.service.implementation';
+import { ChatServiceImplementation } from 'src/infrastructure/implementations/chat.service.implementation';
+import { RoleEnum } from 'src/domain/enums/role.enum';
+import { IaServiceImplementation } from 'src/infrastructure/implementations/ia.service.implementation';
+import { ContextInterface } from 'src/domain/interfaces/context.interface';
 
 @Injectable()
 export class ChatFacade {
   constructor(
-    // private readonly whatsappService: WhatsAppService,
-    // private readonly iaSchema: IaSchema,
-    // private readonly iaAudioModel: IaAudioModel,
-    // private readonly databaseSchema: DatabaseSchema,
+    private readonly chatServiceImplementation: ChatServiceImplementation,
+    private readonly iaServiceImplementation: IaServiceImplementation,
+    private readonly databaseServiceImplementation: DatabaseServiceImplementation,
   ) {}
 
-  async processTextMessage(messageId: string, messageText: string): Promise<void> {
-    // // Find or create user in the database based on sender's ID from WhatsApp
-    // const user = await this.databaseSchema.findOrCreateUser(this.whatsappService.getId());
-  
-    // // Find or create conversation for the user
-    // const conversation = await this.databaseSchema.findOrCreateConversation(user.id);
-  
-    // // Mark the message as read
-    // await this.whatsappService.markMessageAsRead(messageId);
-  
-    // // Process the text message and get a response
-    // const responseMessage = await this.iaSchema.processMessage(messageText);
-  
-    // // Send the response if it exists
-    // if (responseMessage) {
-    //   await this.whatsappService.sendMessage({ text: responseMessage.text });
-    // }
+  async processTextMessage(
+    messageId: string,
+    messageText: string,
+  ): Promise<void> {
+    try {
+      let conversation_id;
+      const user_id = this.chatServiceImplementation.getId();
+      const user =
+        await this.databaseServiceImplementation.findOrCreateUser(user_id);
+
+      // If user was successfully found or created, proceed with conversation
+      const lastUserConversation =
+        await this.databaseServiceImplementation.findLastConversation(user.id);
+
+      if (lastUserConversation?.id) {
+        if (!lastUserConversation?.summary) {
+          conversation_id = lastUserConversation.id;
+        } else {
+          // Si la última conversacion tiene resumen, iniciamos una nueva conversacion e incorporamos el resumen como primer mensaje
+          const newConversation =
+            await this.databaseServiceImplementation.createConversation(
+              lastUserConversation.user_id,
+            );
+          // Agregamos el primer mensaje que es el resumen realizado por el asistente
+          await this.databaseServiceImplementation.addMessageToConversation(
+            newConversation.id,
+            'Resumen de conversacion anterior: ' + lastUserConversation.summary,
+            RoleEnum.SYSTEM,
+            lastUserConversation.tokens,
+          );
+          conversation_id = newConversation.id; // Cambiado para asignar el nuevo ID de conversación
+        }
+      } else {
+        // Si NO existe una conversacion, iniciamos una nueva conversacion vacio
+        const newConversation =
+          await this.databaseServiceImplementation.createConversation(
+            user.id, // Cambiado para utilizar el user_id correcto
+          );
+        conversation_id = newConversation.id;
+      }
+
+      await this.databaseServiceImplementation.addMessageToConversation(
+        conversation_id,
+        'Resumen de conversacion anterior: ' + lastUserConversation.summary,
+        RoleEnum.SYSTEM,
+        lastUserConversation.tokens,
+      );
+
+      const messages =
+        await this.databaseServiceImplementation.getConversationMessages(
+          conversation_id,
+        );
+
+      // Modificar la creación de context para que sea un array de ContextInterface
+      const context: ContextInterface[] = messages.map((message) => ({
+        id: message.id, // Asumiendo que cada message tiene un ID
+        message: message.message, // Asegúrate de que esto esté en el objeto
+        role: message.role, // Este es opcional
+      }));
+
+      this.iaServiceImplementation.setContext(context);
+    } catch (error) {
+      // Handle errors gracefully and log them if needed
+      console.error('Error processing text message:', error);
+    }
+    await this.chatServiceImplementation.markMessageAsRead(messageId);
   }
-  
 
   // async processAudioMessage(messageId: string, audioId: string): Promise<void> {
   //   // Download audio from WhatsApp
-  //   const audioData = await this.whatsappService.downloadMedia(audioId);
+  //   const audioData = await this.chatServiceImplementation.downloadMedia(audioId);
 
   //   // Save the audio in the media folder as .ogg
   //   const oggFilePath = await guardarArchivoOgg(audioData, `${audioId}.ogg`);
@@ -47,21 +95,21 @@ export class ChatFacade {
   //   const transcription = await this.iaAudioModel.transcribeAudio(mp3FilePath);
 
   //   // Mark the message as read
-  //   await this.whatsappService.markAsRead(messageId);
+  //   await this.chatServiceImplementation.markAsRead(messageId);
 
   //   // Calculate tokens for the transcribed message
-  //   this.iaSchema.calculateTokens(transcription);
+  //   this.iaServiceImplementation.calculateTokens(transcription);
 
   //   // Log the transcription
   //   console.log('Transcription:', transcription);
 
   //   // Process the transcribed text and get a response
-  //   const responseMessage = await this.iaSchema.processMessage(transcription);
+  //   const responseMessage = await this.iaServiceImplementation.processMessage(transcription);
 
   //   if (responseMessage) {
   //     // Filter and reformat text response for audio output
   //     const textContent = responseMessage.text.filter(item => !item.link).map(item => item.text).join(', ');
-  //     const audioReadyText = await this.iaSchema.remapResponseForAudio(textContent);
+  //     const audioReadyText = await this.iaServiceImplementation.remapResponseForAudio(textContent);
 
   //     // Create audio file from response text
   //     const audioFilePath = await this.iaAudioModel.createAudioFileFromText(audioReadyText);
@@ -73,7 +121,7 @@ export class ChatFacade {
   //     ];
 
   //     // Send the audio response and any additional text/links
-  //     await this.whatsappService.sendMessage(messageToSend);
+  //     await this.chatServiceImplementation.sendMessage(messageToSend);
   //   }
   // }
 }

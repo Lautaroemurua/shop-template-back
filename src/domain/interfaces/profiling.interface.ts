@@ -6,6 +6,7 @@ export interface ProfilingInterface {
   location?: string;
   networks?: string;
   interest?: string[];
-  hint: string;
-  summary: string;
+  hint?: string;
+  suggestion?: string;
+  summary?: string;
 }

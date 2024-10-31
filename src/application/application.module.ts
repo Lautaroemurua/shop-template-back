@@ -8,7 +8,7 @@ import { WhatsAppService } from './services/whatsapp/whatsapp.service';
 import { ProcessMessageUseCase } from './use-cases/process-message.use-case';
 import { InfrastructureModule } from 'src/infrastructure/infrastructure.module';
 import { ChatFacade } from './facades/chat.facade';
-import { ConversationService } from './services/conversation/conversation.service';
+import { ChatGptService } from './services/chatgpt/chatGpt.service';
 import { ConversationEntity } from 'src/domain/entities/conversation.entity';
 import { MessagesEntity } from 'src/domain/entities/messages.entity';
 import { UserEntity } from 'src/domain/entities/user.entity';
@@ -26,7 +26,7 @@ import { MessagesRepository } from './repositories/messages.repository';
         WhatsAppService,
         ProcessMessageUseCase,
         ChatFacade,
-        ConversationService,
+        ChatGptService,
         UserRepository,// Asegúrate de incluir tu repositorio aquí
     ],
     exports: [
@@ -36,7 +36,7 @@ import { MessagesRepository } from './repositories/messages.repository';
         WhatsAppService,
         ProcessMessageUseCase,
         ChatFacade,
-        ConversationService,
+        ChatGptService,
         UserRepository,
     ],
 })

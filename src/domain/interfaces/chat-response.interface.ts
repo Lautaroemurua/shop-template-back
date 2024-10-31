@@ -1,7 +1,7 @@
-import { Rol } from "../enums/rol.enum";
+import { RoleEnum } from "../enums/role.enum";
 
 export interface ChatResponseInterface {
   mensaje: string;
-  rol: Rol | null;
+  rol: RoleEnum | null;
   tokens: number | undefined;
 }

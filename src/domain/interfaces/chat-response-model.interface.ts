@@ -1,6 +1,6 @@
-import { IaSchema } from "../../infrastructure/implementations/ia-schema.interface";
+import { IaInterface } from "./ia.interface";
 
 export interface ChatResponseModelInterface {
-    texto: IaSchema[];
+    texto: IaInterface[];
     token: number;
   }
