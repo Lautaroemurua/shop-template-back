@@ -26,7 +26,7 @@ services:
     environment:
       - POSTGRES_USER=user  # Usuario de la base de datos
       - POSTGRES_PASSWORD=Abc0ms0si24  # Contraseña de la base de datos
-      - POSTGRES_DB=shops  # Nombre de la base de datos
+      - POSTGRES_DB=shops-template  # Nombre de la base de datos
     volumes:
       - postgres_data:/var/lib/postgresql/data  # Volumen persistente para la base de datos
 

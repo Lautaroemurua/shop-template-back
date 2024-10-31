@@ -1,9 +1,9 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { Messages } from '../../domain/entities/messages.entity';
+import { MessagesEntity } from '../../domain/entities/messages.entity';
 
-@EntityRepository(Messages)
-export class MessagesRepository extends Repository<Messages> {
-  async saveMessage(conversationId: string, message: string, role: string, tokens: number): Promise<Messages> {
+@EntityRepository(MessagesEntity)
+export class MessagesRepository extends Repository<MessagesEntity> {
+  async saveMessage(conversationId: string, message: string, role: string, tokens: number): Promise<MessagesEntity> {
     const newMessage = this.create({ 
       conversation_id: conversationId, 
       message, 

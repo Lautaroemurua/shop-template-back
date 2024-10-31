@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('messages') // Asegúrate de que el nombre de la tabla sea correcto
-export class Messages {
+export class MessagesEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
