@@ -3,3 +3,5 @@ Backend en Node.js utilizando NestJS para una tienda en línea con distintos rol
 
 
 Número de prueba: +1 555 136 3141
+
+docker-compose up -d --build para levantar el docker

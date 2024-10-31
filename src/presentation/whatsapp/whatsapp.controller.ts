@@ -7,6 +7,7 @@ import { Response } from 'express';
 
 @Controller('whatsapp')
 export class WhatsAppController {
+  conversationService: any;
     constructor(
         private readonly configurationService: ConfigurationService,
         private readonly whatsappService: WhatsAppService,
@@ -39,9 +40,14 @@ export class WhatsAppController {
       if (!whatsappData) {
         return res.status(HttpStatus.BAD_REQUEST).send('Datos no validados');
       }
-
+  
       const personality = await this.configurationService.getPersonality();
-
+      const phone = whatsappData.from; // Asumiendo que el número de teléfono está en whatsappData.from
+  
+      // Iniciar la conversación, creando el usuario si no existe
+      const conversation = await this.conversationService.startConversation(phone);
+      console.log('Conversación iniciada:', conversation);
+  
       switch (whatsappData.messages.type) {
         case 'text':
           const messagesWZ = whatsappData.messages.text?.body;
@@ -69,7 +75,7 @@ export class WhatsAppController {
           );
           break;
       }
-
+  
       res.send(this.chatFacade.getHistory());
     } catch (e) {
       res.send(e.message);
