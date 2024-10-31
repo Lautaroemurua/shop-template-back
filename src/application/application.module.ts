@@ -1,3 +1,4 @@
+// src/application/application.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MessagesRepository } from './repositories/messages.repository';
@@ -12,7 +13,7 @@ import { ConversationService } from './services/conversation/conversation.servic
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([ConversationRepository, MessagesRepository, UserRepository]), // Asegúrate de incluir UserRepository aquí
+        TypeOrmModule.forFeature([ConversationRepository, MessagesRepository, UserRepository]),
         InfrastructureModule,
     ],
     providers: [
@@ -31,7 +32,7 @@ import { ConversationService } from './services/conversation/conversation.servic
         WhatsAppService,
         ProcessMessageUseCase,
         ChatFacade,
-        ConversationService, // Agrega ConversationService aquí si necesitas usarlo en otros módulos
+        ConversationService, // Asegúrate de que ConversationService esté exportado
     ],
 })
 export class ApplicationModule {}

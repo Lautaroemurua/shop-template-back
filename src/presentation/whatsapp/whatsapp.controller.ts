@@ -4,14 +4,15 @@ import { ConfigurationService } from '../../application/services/configutation/c
 import { WhatsAppService } from '../../application/services/whatsapp/whatsapp.service';
 import { ChatFacade } from '../../application/facades/chat.facade';
 import { Response } from 'express';
+import { ConversationService } from '../../application/services/conversation/conversation.service';
 
 @Controller('whatsapp')
 export class WhatsAppController {
-  conversationService: any;
     constructor(
         private readonly configurationService: ConfigurationService,
         private readonly whatsappService: WhatsAppService,
-        private readonly chatFacade: ChatFacade, // Asegúrate de que ChatFacade esté aquí
+        private readonly chatFacade: ChatFacade,
+        private readonly conversationService: ConversationService,
     ) {}
 
   @Get('webhook')
