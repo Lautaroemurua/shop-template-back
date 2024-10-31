@@ -1,15 +1,22 @@
+// src/application/repositories/user.repository.ts
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../../domain/entities/user.entity';
-import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class UserRepository extends Repository<UserEntity> {
+export class UserRepository {
+    constructor(
+        @InjectRepository(UserEntity)
+        private readonly userRepository: Repository<UserEntity>
+    ) {}
+
     async findByPhone(phone: string): Promise<UserEntity | undefined> {
-        return this.findOne({ where: { phone } });
+        return this.userRepository.findOne({ where: { phone } });
     }
 
     async createUser(phone: string): Promise<UserEntity> {
-        const user = this.create({ phone });
-        return this.save(user);
+        const user = this.userRepository.create({ phone });
+        return this.userRepository.save(user);
     }
 }

@@ -8,23 +8,31 @@ import { ConversationEntity } from '../../domain/entities/conversation.entity';
 export class ConversationRepository {
   constructor(
     @InjectRepository(ConversationEntity)
-    private readonly conversationRepository: Repository<ConversationEntity>,
+    private readonly repository: Repository<ConversationEntity>, // Nombramos el repositorio de manera más clara
   ) {}
 
-  async createConversation(userId: string, summary: string): Promise<ConversationEntity> {
-    const conversation = this.conversationRepository.create({ user_id: userId, summary });
-    return this.conversationRepository.save(conversation);
+  // Método para crear una nueva conversación
+  async createConversation(userId: string, summary: string | null): Promise<ConversationEntity> {
+    const conversation = this.repository.create({ user_id: userId, summary });
+    return this.repository.save(conversation);
   }
 
-  async findConversationById(user_id: string): Promise<ConversationEntity | null> {
-    return this.conversationRepository.findOne({ where: { user_id } });
+  // Método para encontrar una conversación abierta (donde summary es null)
+  async findOpenConversation(userId: string): Promise<ConversationEntity | null> {
+    return this.repository.findOne({
+      where: {
+        user_id: userId,
+        summary: null,
+      },
+    });
   }
 
-  async updateSummary(user_id: string, summary: string): Promise<ConversationEntity | null> {
-    const conversation = await this.findConversationById(user_id);
+  // Método para actualizar el resumen de una conversación existente
+  async updateSummary(userId: string, summary: string): Promise<ConversationEntity | null> {
+    const conversation = await this.findOpenConversation(userId); // Usamos `findOpenConversation`
     if (!conversation) return null;
 
     conversation.summary = summary;
-    return this.conversationRepository.save(conversation);
+    return this.repository.save(conversation);
   }
 }

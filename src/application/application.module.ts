@@ -10,10 +10,13 @@ import { ProcessMessageUseCase } from './use-cases/process-message.use-case';
 import { InfrastructureModule } from 'src/infrastructure/infrastructure.module';
 import { ChatFacade } from './facades/chat.facade';
 import { ConversationService } from './services/conversation/conversation.service';
+import { ConversationEntity } from 'src/domain/entities/conversation.entity';
+import { MessagesEntity } from 'src/domain/entities/messages.entity';
+import { UserEntity } from 'src/domain/entities/user.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([ConversationRepository, MessagesRepository, UserRepository]),
+        TypeOrmModule.forFeature([ConversationEntity, MessagesEntity, UserEntity]),
         InfrastructureModule,
     ],
     providers: [
@@ -24,6 +27,7 @@ import { ConversationService } from './services/conversation/conversation.servic
         ProcessMessageUseCase,
         ChatFacade,
         ConversationService,
+        UserRepository, // Asegúrate de incluir tu repositorio aquí
     ],
     exports: [
         ConfigurationService,
@@ -32,7 +36,8 @@ import { ConversationService } from './services/conversation/conversation.servic
         WhatsAppService,
         ProcessMessageUseCase,
         ChatFacade,
-        ConversationService, // Asegúrate de que ConversationService esté exportado
+        ConversationService,
+        UserRepository,
     ],
 })
 export class ApplicationModule {}

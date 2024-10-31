@@ -1,13 +1,13 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('users') // Puedes especificar el nombre de la tabla si es necesario
+@Entity('users')
 export class UserEntity {
-  @PrimaryGeneratedColumn('uuid')  // Genera UUID automáticamente
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   phone: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })  // Usa CURRENT_TIMESTAMP para PostgreSQL
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 }
