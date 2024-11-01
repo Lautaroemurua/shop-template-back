@@ -19,8 +19,8 @@ import { IaInterface } from 'src/domain/interfaces/ia.interface';
 import { ElevenLabsClient } from 'elevenlabs';
 import { v4 as uuid } from 'uuid';
 import { FunctionTool } from 'src/domain/interfaces/function-tools.interface';
-import { ProfilingInterface } from 'src/domain/interfaces/Profiling.interface';
 import { chatGptSchemaProfiling } from 'src/domain/schema/chatGptProfiling.schema';
+import { UserInterface } from 'src/domain/interfaces';
 
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 
@@ -106,7 +106,7 @@ export class ChatGptService {
     this.logger.log('Adding system response to context');
 
     const messageParsed: ChatCompletionSystemMessageParam = {
-      role: RoleEnum.SYSTEM,
+      role: 'system',
       content: message,
     };
 
@@ -305,7 +305,7 @@ export class ChatGptService {
 
   async generateConversationSummary(
     messages: string[],
-  ): Promise<ProfilingInterface> {
+  ): Promise<UserInterface> {
     // Existen messages por resumir
     if (messages.length === 0) {
       return { suggestion: '', summary: 'No se pudo generar un resumen.' };

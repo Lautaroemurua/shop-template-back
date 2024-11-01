@@ -1,5 +1,5 @@
+import { RoleEnum } from 'src/domain/enums/role.enum';
 import { CustomerCategory } from '../../domain/enums/customer-category.enum';
-import { RoleEnum } from '../../domain/enums/role.enum';
 import { ConversationInterface } from '../../domain/interfaces/conversation.interface';
 import { MessageInterface } from '../../domain/interfaces/message.interface';
 import { UserChannelInterface } from '../../domain/interfaces/user-channel.interface';
@@ -10,10 +10,12 @@ export interface DatabaseServiceImplementation {
   findOrCreateUser: (phoneNumber: string) => Promise<UserChannelInterface>;
   updateUserCategory: (
     userId: string,
-    category: keyof CustomerCategory,
+    category: CustomerCategory,
   ) => Promise<UserChannelInterface>;
   createConversation: (userId: string) => Promise<ConversationInterface>;
-  findLastConversation: (userId: string) => Promise<ConversationInterface | null>;
+  findLastConversation: (
+    usuario_id: string,
+  ) => Promise<ConversationInterface | null>;
   findLastSummary: (userId: string) => Promise<ConversationInterface | null>;
   findConversationWithoutSummary: (
     userId: string,
@@ -24,7 +26,7 @@ export interface DatabaseServiceImplementation {
     conversationId: string,
     message: string,
     role: RoleEnum,
-    tokens: number
+    tokens: number,
   ) => Promise<MessageInterface>;
   getConversationMessages(userId: string): Promise<MessageInterface[]>;
   updateConversationSummary(

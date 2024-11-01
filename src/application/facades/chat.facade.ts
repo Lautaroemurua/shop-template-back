@@ -4,6 +4,7 @@ import { ChatServiceImplementation } from 'src/infrastructure/implementations/ch
 import { RoleEnum } from 'src/domain/enums/role.enum';
 import { IaServiceImplementation } from 'src/infrastructure/implementations/ia.service.implementation';
 import { ContextInterface } from 'src/domain/interfaces/context.interface';
+import { UserInterface } from 'src/domain/interfaces';
 
 @Injectable()
 export class ChatFacade {
@@ -14,8 +15,9 @@ export class ChatFacade {
   ) {}
 
   async processTextMessage(
-    messageId: string,
-    messageText: string,
+    messageId?: string,
+    message?: string,
+    userData?: UserInterface
   ): Promise<void> {
     try {
       let conversation_id;

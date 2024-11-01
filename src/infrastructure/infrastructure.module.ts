@@ -6,6 +6,7 @@ import { WhatsAppClient } from './chat/whatsapp/whatsapp.client';
 import { OpenAiClient } from './ia/openai/openai.client';
 import { typeOrmModuleConfig } from './database/database.config';
 import { SpeechToTextService } from '../application/services/speech-to-text/speech-to-text.service';
+import { ChatServiceImplementation } from './implementations/chat.service.implementation';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { SpeechToTextService } from '../application/services/speech-to-text/spee
     WhatsAppClient,
     OpenAiClient,
     SpeechToTextService,
+    ChatServiceImplementation,
   ],
   exports: [
     TypeOrmModule,
@@ -24,6 +26,7 @@ import { SpeechToTextService } from '../application/services/speech-to-text/spee
     WhatsAppClient,
     OpenAiClient,
     DomainModule,
+    ChatServiceImplementation,
   ]
 })
 export class InfrastructureModule {}

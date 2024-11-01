@@ -1,4 +1,7 @@
-export interface ChatServiceImplementation {
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class ChatServiceImplementation {
     getId: () => string
     markMessageAsRead: (id: string) => Promise<void>
     sendMessage: (messages: { audio?: string, text?: string, link?: string, caption?: string }[]) => Promise<void>
