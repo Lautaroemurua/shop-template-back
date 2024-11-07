@@ -2,6 +2,9 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { DataSourceOptions, DataSource } from 'typeorm';
 import { join } from 'path';
 import { config } from 'dotenv';
+import { ConversationEntity } from 'src/domain/entities/conversation.entity';
+import { MessagesEntity } from 'src/domain/entities/messages.entity';
+import { UserEntity } from 'src/domain/entities/user.entity';
 
 config();
 
@@ -13,7 +16,7 @@ export const typeOrmModuleConfig: TypeOrmModuleOptions = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME || 'mydatabase',
-  entities: [join(__dirname, '../../domain/entities/*.entity{.ts,.js}')],
+  entities: [ConversationEntity, MessagesEntity, UserEntity],
   synchronize: true,  // Solo para desarrollo
   retryAttempts: 3,
   retryDelay: 3000,
@@ -29,7 +32,7 @@ export const typeOrmDataSourceConfig: DataSourceOptions = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME || 'mydatabase',
-  entities: [join(__dirname, '../../domain/entities/*.entity{.ts,.js}')],
+  entities: [ConversationEntity, MessagesEntity, UserEntity],
   synchronize: true,  // Solo para desarrollo
 };
 

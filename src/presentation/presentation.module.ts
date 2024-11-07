@@ -5,6 +5,6 @@ import { WhatsAppController } from './whatsapp/whatsapp.controller';
 
 @Module({
     imports: [ApplicationModule],
-    controllers: [WhatsAppController],
+    controllers: [WhatsAppController]
 })
 export class PresentationModule {}

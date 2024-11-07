@@ -3,23 +3,25 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConversationEntity } from '../../domain/entities/conversation.entity';
+import { UserEntity } from 'src/domain/entities/user.entity';
 
 @Injectable()
 export class ConversationRepository {
   constructor(
     @InjectRepository(ConversationEntity)
-    private readonly repository: Repository<ConversationEntity>, // Nombramos el repositorio de manera más clara
+    private readonly userRepository: Repository<UserEntity>,
+    private readonly conversationRepository: Repository<ConversationEntity>,
   ) {}
 
   // Método para crear una nueva conversación
   async createConversation(user_id: string, summary: string | null): Promise<ConversationEntity> {
-    const conversation = this.repository.create({ user_id: user_id, summary });
-    return this.repository.save(conversation);
+    const conversation = this.conversationRepository.create({ user_id: user_id, summary });
+    return this.conversationRepository.save(conversation);
   }
 
   // Método para encontrar una conversación abierta (donde summary es null)
   async findOpenConversation(user_id: string): Promise<ConversationEntity | null> {
-    return this.repository.findOne({
+    return this.conversationRepository.findOne({
       where: {
         user_id: user_id,
         summary: null,
@@ -33,6 +35,7 @@ export class ConversationRepository {
     if (!conversation) return null;
 
     conversation.summary = summary;
-    return this.repository.save(conversation);
+    return this.conversationRepository.save(conversation);
   }
+
 }

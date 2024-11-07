@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseServiceImplementation } from 'src/infrastructure/implementations/database.service.implementation';
 import { ChatServiceImplementation } from 'src/infrastructure/implementations/chat.service.implementation';
 import { RoleEnum } from 'src/domain/enums/role.enum';
 import { IaServiceImplementation } from 'src/infrastructure/implementations/ia.service.implementation';
 import { ContextInterface } from 'src/domain/interfaces/context.interface';
 import { UserInterface } from 'src/domain/interfaces';
+import { DatabaseImplementationService } from 'src/infrastructure/implementations/database.implementation.service';
 
 @Injectable()
 export class ChatFacade {
   constructor(
     private readonly chatServiceImplementation: ChatServiceImplementation,
     private readonly iaServiceImplementation: IaServiceImplementation,
-    private readonly databaseServiceImplementation: DatabaseServiceImplementation,
+    private readonly databaseImplementationService: DatabaseImplementationService,
   ) {}
 
   async processTextMessage(
@@ -23,11 +23,11 @@ export class ChatFacade {
       let conversation_id;
       const user_id = this.chatServiceImplementation.getId();
       const user =
-        await this.databaseServiceImplementation.findOrCreateUser(user_id);
+        await this.databaseImplementationService.findOrCreateUser(user_id);
 
       // If user was successfully found or created, proceed with conversation
       const lastUserConversation =
-        await this.databaseServiceImplementation.findLastConversation(user.id);
+        await this.databaseImplementationService.findLastConversation(user.id);
 
       if (lastUserConversation?.id) {
         if (!lastUserConversation?.summary) {
@@ -35,11 +35,11 @@ export class ChatFacade {
         } else {
           // Si la última conversacion tiene resumen, iniciamos una nueva conversacion e incorporamos el resumen como primer mensaje
           const newConversation =
-            await this.databaseServiceImplementation.createConversation(
+            await this.databaseImplementationService.createConversation(
               lastUserConversation.user_id,
             );
           // Agregamos el primer mensaje que es el resumen realizado por el asistente
-          await this.databaseServiceImplementation.addMessageToConversation(
+          await this.databaseImplementationService.addMessageToConversation(
             newConversation.id,
             'Resumen de conversacion anterior: ' + lastUserConversation.summary,
             RoleEnum.SYSTEM,
@@ -50,13 +50,13 @@ export class ChatFacade {
       } else {
         // Si NO existe una conversacion, iniciamos una nueva conversacion vacio
         const newConversation =
-          await this.databaseServiceImplementation.createConversation(
+          await this.databaseImplementationService.createConversation(
             user.id, // Cambiado para utilizar el user_id correcto
           );
         conversation_id = newConversation.id;
       }
 
-      await this.databaseServiceImplementation.addMessageToConversation(
+      await this.databaseImplementationService.addMessageToConversation(
         conversation_id,
         'Resumen de conversacion anterior: ' + lastUserConversation.summary,
         RoleEnum.SYSTEM,
@@ -64,7 +64,7 @@ export class ChatFacade {
       );
 
       const messages =
-        await this.databaseServiceImplementation.getConversationMessages(
+        await this.databaseImplementationService.getConversationMessages(
           conversation_id,
         );
 
