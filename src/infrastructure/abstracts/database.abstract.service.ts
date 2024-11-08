@@ -17,7 +17,7 @@ export abstract class DatabaseAbstractService {
   abstract findConversationWithoutSummary(userId: string): Promise<ConversationInterface | null>;
   abstract findOrCreateConversation(userId: string): Promise<ConversationInterface>;
   abstract findConversationsWithoutSummary(): Promise<ConversationInterface[] | []>;
-  abstract addMessageToConversation(conversationId: string, message: string, role: RoleEnum, tokens: number): Promise<MessageInterface>;
+  abstract addMessageToConversation(conversationId: string, totalMessages: number, message: string, role: RoleEnum, tokens: number): Promise<MessageInterface>;
   abstract getConversationMessages(userId: string): Promise<MessageInterface[]>;
   abstract updateConversationSummary(conversationId: string, summary: string, suggestion: string, interests: string[], data: object): Promise<void>;
 }

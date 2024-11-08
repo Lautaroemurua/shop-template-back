@@ -36,7 +36,7 @@ export class DatabaseImplementationService extends DatabaseAbstractService {
   findConversationsWithoutSummary(): Promise<ConversationInterface[] | []> {
     throw new Error('Method not implemented.');
   }
-  addMessageToConversation(conversationId: string, message: string, role: RoleEnum, tokens: number): Promise<MessageInterface> {
+  addMessageToConversation(conversationId: string, totalMessages: number, message: string, role: RoleEnum, tokens: number): Promise<MessageInterface> {
     throw new Error('Method not implemented.');
   }
   getConversationMessages(userId: string): Promise<MessageInterface[]> {
